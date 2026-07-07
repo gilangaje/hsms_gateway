@@ -1,11 +1,17 @@
 class HsmsSocket:
 
-    def connect()
+    def connect(self):
+        ...
 
-    def disconnect()
+    def disconnect(self):
+        ...
 
-    def send()
+    def send(self, data: bytes):
+        ...
 
-    def recv_exact()
+    def receive(self, size: int) -> bytes:
+        ...
 
-    def receive()
+    @property
+    def connected(self) -> bool:
+        ...

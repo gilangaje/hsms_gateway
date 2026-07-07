@@ -2,7 +2,6 @@ from enum import IntEnum
 
 
 class SessionType(IntEnum):
-
     DATA = 0
 
     SELECT_REQ = 1
