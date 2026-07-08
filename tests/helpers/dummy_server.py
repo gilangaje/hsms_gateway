@@ -1,6 +1,8 @@
 import socket
 import threading
 
+from hsms_gateway.hsms import frame
+
 
 class DummyTcpServer:
 
@@ -16,12 +18,19 @@ class DummyTcpServer:
         self.client = None
 
         self.last_data = b""
+        self.responses = []
 
     def start(self):
 
         self.server = socket.socket(
             socket.AF_INET,
             socket.SOCK_STREAM,
+        )
+
+        self.server.setsockopt(
+            socket.SOL_SOCKET,
+            socket.SO_REUSEADDR,
+            1,
         )
 
         self.server.bind(
@@ -39,15 +48,31 @@ class DummyTcpServer:
 
         self.client, _ = self.server.accept()
 
-        try:
-            self.last_data = self.client.recv(4096)
+        while True:
 
-        except (
-            ConnectionResetError,
-            ConnectionAbortedError,
-            OSError,
-        ):
-            pass
+            try:
+
+                data = self.client.recv(4096)
+
+                if not data:
+                    break
+
+                self.last_data = data
+
+                if self.responses:
+
+                    frame = self.responses.pop(0)
+
+                    self.client.sendall(
+                        frame.encode()
+                    )
+
+            except (
+                ConnectionResetError,
+                ConnectionAbortedError,
+                OSError,
+            ):
+                break
 
     def stop(self):
 
@@ -71,3 +96,7 @@ class DummyTcpServer:
         self.send(
             frame.encode()
         )
+    
+    def queue_response(self, frame):
+
+        self.responses.append(frame)
