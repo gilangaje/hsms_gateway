@@ -39,7 +39,15 @@ class DummyTcpServer:
 
         self.client, _ = self.server.accept()
 
-        self.last_data = self.client.recv(4096)
+        try:
+            self.last_data = self.client.recv(4096)
+
+        except (
+            ConnectionResetError,
+            ConnectionAbortedError,
+            OSError,
+        ):
+            pass
 
     def stop(self):
 
