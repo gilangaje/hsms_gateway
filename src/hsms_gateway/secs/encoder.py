@@ -1,5 +1,9 @@
 from .items import (
     A,
+    B,
+    U1,
+    U2,
+    U4,
 )
 
 from .formats import (
@@ -46,7 +50,62 @@ def encode_item(item):
             )
             + data
         )
+    if isinstance(item, B):
+
+        data = item.value
+
+        return (
+            encode_header(
+                SecsFormat.BINARY,
+                len(data),
+            )
+            + data
+        )
+    if isinstance(item, U1):
+
+        data = item.value.to_bytes(
+            1,
+            "big",
+        )
+
+        return (
+            encode_header(
+                SecsFormat.U1,
+                len(data),
+            )
+            + data
+        )
+    if isinstance(item, U2):
+
+        data = item.value.to_bytes(
+            2,
+            "big",
+        )
+
+        return (
+            encode_header(
+                SecsFormat.U2,
+                len(data),
+            )
+            + data
+        )
+    if isinstance(item, U4):
+
+        data = item.value.to_bytes(
+            4,
+            "big",
+        )
+
+        return (
+            encode_header(
+                SecsFormat.U4,
+                len(data),
+            )
+            + data
+        )
 
     raise NotImplementedError(
         type(item).__name__
     )
+
+    
