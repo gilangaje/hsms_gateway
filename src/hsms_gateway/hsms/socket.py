@@ -6,7 +6,7 @@ from .exceptions import (
     ConnectionClosedError,
     ReceiveTimeoutError,
 )
-
+from .frame import HsmsFrame
 
 class HsmsSocket:
 
@@ -106,3 +106,26 @@ class HsmsSocket:
             data.extend(chunk)
 
         return bytes(data)
+    def send_frame(self, frame: HsmsFrame) -> None:
+        """
+        Send one HSMS frame.
+        """
+
+        if not self.connected:
+            raise ConnectionError(
+                "Socket is not connected."
+            )
+
+        self._socket.sendall(
+            frame.encode()
+        )
+    def send_frame(self, frame: HsmsFrame) -> None:
+
+        if not self.connected:
+            raise ConnectionError(
+                "Socket is not connected."
+            )
+
+        self._socket.sendall(
+            frame.encode()
+        )

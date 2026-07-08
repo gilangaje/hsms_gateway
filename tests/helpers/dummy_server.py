@@ -15,6 +15,8 @@ class DummyTcpServer:
         self.server = None
         self.client = None
 
+        self.last_data = b""
+
     def start(self):
 
         self.server = socket.socket(
@@ -36,6 +38,8 @@ class DummyTcpServer:
     def _accept(self):
 
         self.client, _ = self.server.accept()
+
+        self.last_data = self.client.recv(4096)
 
     def stop(self):
 
