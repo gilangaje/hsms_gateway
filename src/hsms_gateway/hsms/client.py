@@ -1,8 +1,11 @@
 from .frame import HsmsFrame
 from .socket import HsmsSocket
 from .state import HsmsState
-from .messages import select_req
 from .constants import SType
+from .messages import (
+    select_req,
+    linktest_req,
+)
 
 
 class HsmsClient:
@@ -67,3 +70,28 @@ class HsmsClient:
             )
 
         self.state = HsmsState.SELECTED
+
+    def linktest(self) -> None:
+        """
+        Perform HSMS Linktest handshake.
+        """
+
+        if self.state != HsmsState.SELECTED:
+            raise RuntimeError(
+                "HSMS session is not selected."
+            )
+
+        # Kirim Linktest.req
+        self.send_frame(
+            linktest_req()
+        )
+
+        # Tunggu Linktest.rsp
+        response = self.receive_frame()
+
+        if response.header.s_type != SType.LINKTEST_RSP:
+            raise RuntimeError(
+                "Expected Linktest.rsp."
+            )
+
+        # Linktest tidak mengubah state
