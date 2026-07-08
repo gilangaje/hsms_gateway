@@ -129,3 +129,28 @@ class HsmsSocket:
         self._socket.sendall(
             frame.encode()
         )
+    
+    def receive_frame(self) -> HsmsFrame:
+        """
+        Receive one complete HSMS frame.
+        """
+
+        if not self.connected:
+            raise ConnectionError(
+                "Socket is not connected."
+            )
+
+        # Read length field (4 bytes)
+        length_bytes = self.recv_exact(4)
+
+        length = int.from_bytes(
+            length_bytes,
+            "big",
+        )
+
+        # Read remaining bytes
+        payload = self.recv_exact(length)
+
+        return HsmsFrame.decode(
+            length_bytes + payload
+        )

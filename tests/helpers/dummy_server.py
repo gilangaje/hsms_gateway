@@ -57,3 +57,9 @@ class DummyTcpServer:
             )
 
         self.client.sendall(data)
+
+    def send_frame(self, frame):
+
+        self.send(
+            frame.encode()
+        )
