@@ -4,6 +4,7 @@ from .items import (
     U1,
     U2,
     U4,
+    L,
 )
 
 from .formats import (
@@ -102,6 +103,22 @@ def encode_item(item):
                 len(data),
             )
             + data
+        )
+    
+    if isinstance(item, L):
+
+        body = b""
+
+        for child in item.value:
+
+            body += encode_item(child)
+
+        return (
+            encode_header(
+                SecsFormat.LIST,
+                len(item.value),
+            )
+            + body
         )
 
     raise NotImplementedError(

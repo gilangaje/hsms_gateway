@@ -6,7 +6,8 @@ from .messages import (
     select_req,
     linktest_req,
 )
-
+from ..secs.message import SecsMessage
+from ..secs.message_codec import encode_message
 
 class HsmsClient:
 
@@ -95,3 +96,12 @@ class HsmsClient:
             )
 
         # Linktest tidak mengubah state
+
+    def send_message(
+        self,
+        message: SecsMessage,
+    ) -> None:
+
+        frame = encode_message(message)
+
+        self.send_frame(frame)
