@@ -1,9 +1,6 @@
 import socket
 import threading
 
-from hsms_gateway.hsms import frame
-
-
 class DummyTcpServer:
 
     def __init__(
@@ -61,11 +58,12 @@ class DummyTcpServer:
 
                 if self.responses:
 
-                    frame = self.responses.pop(0)
+                    response = self.responses.pop(0)
 
-                    self.client.sendall(
-                        frame.encode()
-                    )
+                    if hasattr(response, "encode"):
+                        response = response.encode()
+
+                    self.client.sendall(response)
 
             except (
                 ConnectionResetError,
@@ -97,6 +95,6 @@ class DummyTcpServer:
             frame.encode()
         )
     
-    def queue_response(self, frame):
+    def queue_response(self, data: bytes):
 
-        self.responses.append(frame)
+        self.responses.append(data)

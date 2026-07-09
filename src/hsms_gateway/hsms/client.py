@@ -8,6 +8,7 @@ from .messages import (
 )
 from ..secs.message import SecsMessage
 from ..secs.message_codec import encode_message
+from ..secs.message_codec import decode_message
 
 class HsmsClient:
 
@@ -105,3 +106,8 @@ class HsmsClient:
         frame = encode_message(message)
 
         self.send_frame(frame)
+
+    def receive_message(self):
+        frame = self.receive_frame()
+
+        return decode_message(frame)
