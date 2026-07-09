@@ -111,3 +111,12 @@ class HsmsClient:
         frame = self.receive_frame()
 
         return decode_message(frame)
+    
+    def transaction(self, message):
+
+        self.send_message(message)
+
+        if message.wbit:
+            return self.receive_message()
+
+        return None
