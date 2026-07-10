@@ -16,6 +16,13 @@ class SecsItem:
             f"({self.value!r})"
         )
     
+    def __eq__(self, other):
+
+        return (
+            isinstance(other, self.__class__)
+            and self.value == other.value
+        )
+    
 class A(SecsItem):
 
     format = SecsFormat.ASCII
@@ -55,3 +62,11 @@ class L(SecsItem):
     def __len__(self):
 
         return len(self.value)
+
+    def __getitem__(self, index):
+
+        return self.value[index]
+    
+    def append(self, item):
+
+        self.value.append(item)

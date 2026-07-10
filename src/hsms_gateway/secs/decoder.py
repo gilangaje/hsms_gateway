@@ -5,12 +5,13 @@ from .items import (
     U1,
     U2,
     U4,
+    L,
 )
 
 
 def decode_item(data: bytes):
 
-    fmt, start, end = decode_header(data)
+    fmt, length, start, end = decode_header(data)
 
     payload = data[start:end]
 
@@ -45,6 +46,22 @@ def decode_item(data: bytes):
                 "big",
             )
         )
+    
+    if fmt == SecsFormat.LIST:
+
+        items = []
+
+        offset = start
+
+        for _ in range(length):
+
+            item = decode_item(data[offset:])
+
+            items.append(item)
+
+            offset += item_size(data[offset:])
+
+        return L(items)
 
     raise NotImplementedError(
         fmt.name
@@ -69,6 +86,13 @@ def decode_header(data: bytes):
 
     return (
         SecsFormat(format_code),
+        length,
         payload_start,
         payload_end,
     )
+
+def item_size(data: bytes) -> int:
+
+    _, _, _, end = decode_header(data)
+
+    return end
