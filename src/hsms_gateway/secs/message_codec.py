@@ -29,6 +29,7 @@ def encode_message(message: SecsMessage) -> HsmsFrame:
 
 
 def decode_message(frame: HsmsFrame) -> SecsMessage:
+    
     if frame.body:
         body = decode_item(frame.body)
     else:
