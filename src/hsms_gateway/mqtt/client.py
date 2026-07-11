@@ -13,19 +13,45 @@ class MqttClient:
         self._connected = False
         self._client = mqtt.Client()
 
+        self._client.on_connect = self._on_connect
+        self._client.on_disconnect = self._on_disconnect
+
+    def _on_connect(
+        self,
+        client,
+        userdata,
+        flags,
+        rc,
+    ):
+        self._connected = True
+        print("MQTT connected")
+
+
+    def _on_disconnect(
+        self,
+        client,
+        userdata,
+        rc,
+    ):
+        self._connected = False
+        print("MQTT disconnected")
+        
     @property
     def connected(self):
         return self._connected
 
     def connect(self):
-
-        self._client.connect(
+        result = self._client.connect(
             self.host,
             self.port,
         )
 
-        self._client.loop_start()
+        if result != mqtt.MQTT_ERR_SUCCESS:
+            raise RuntimeError(
+                "Failed to connect to MQTT broker"
+            )
 
+        self._client.loop_start()
         self._connected = True
 
     def disconnect(self):
@@ -46,6 +72,9 @@ class MqttClient:
             raise RuntimeError(
                 "MQTT client is not connected"
             )
+        
+        self.last_topic = topic
+        self.last_payload = payload
 
         self._client.publish(
             topic,
