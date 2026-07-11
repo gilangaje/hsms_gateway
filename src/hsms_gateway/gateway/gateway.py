@@ -38,11 +38,21 @@ class HsmsGateway:
         self,
         interval,
         svids,
-        iterations,
+        iterations=None,
     ):
 
-        for _ in range(iterations):
+        if iterations is None:
 
-            self.run_once(svids)
+            while True:
 
-            time.sleep(interval)
+                self.run_once(svids)
+
+                time.sleep(interval)
+
+        else:
+
+            for _ in range(iterations):
+
+                self.run_once(svids)
+
+                time.sleep(interval)
